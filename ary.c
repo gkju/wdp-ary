@@ -44,14 +44,14 @@ bool is_lt(double x, double y) {
 
 // jesli antyprzedzial opisuje tak naprawde przedzial pusty to zmieniamy go w normalny przedzial
 wartosc normalizuj_przedzial(wartosc x) {
-    if(x.anty_przedzial && x.max == inf && x.min == neg_inf) {
+    if(x.anty_przedzial && isinf(x.max) && isinf(x.min) && x.min < 0) {
         x.anty_przedzial = false;
         x.min = x.max = NAN;
-    } else if(x.anty_przedzial && x.min == neg_inf) {
+    } else if(x.anty_przedzial && isinf(x.min) && x.min < 0) {
         x.anty_przedzial = false;
         x.min = x.max;
         x.max = inf;
-    } else if(x.anty_przedzial && x.max == inf) {
+    } else if(x.anty_przedzial && isinf(x.max)) {
         x.anty_przedzial = false;
         x.max = x.min;
         x.min = neg_inf;
@@ -409,6 +409,8 @@ int main() {
   
   wartosc malo = wartosc_od_do(0., 1.);
   wartosc mjeden_do_jeden = wartosc_od_do(-1., 1.);
+
+  wartosc mdwa = wartosc_dokladna(-2.0);
   
   printf("1=%d\n", in_wartosc(razy(zero, malo), 0.0));
   
@@ -423,6 +425,24 @@ int main() {
 
     printf("%.6f %.6f %d \n", podzielic(jeden, mjeden_do_jeden).min, podzielic(jeden, mjeden_do_jeden).max, podzielic(jeden, mjeden_do_jeden).anty_przedzial);
     printf("%.6f %.6f %d \n", podzielic(mjeden, mjeden_do_jeden).min, podzielic(mjeden, mjeden_do_jeden).max, podzielic(mjeden, mjeden_do_jeden).anty_przedzial);
+    printf("%.6f %.6f %d \n", podzielic(mdwa, mjeden_do_jeden).min, podzielic(mdwa, mjeden_do_jeden).max, podzielic(mdwa, mjeden_do_jeden).anty_przedzial);
 
+    wartosc a = wartosc_od_do(3.0, 7.0);
+    wartosc b = wartosc_od_do(-2.0, 4.0);
+    wartosc c = wartosc_od_do(-7.0, 4.0);
+     wartosc d = wartosc_od_do(-7.0, -2.0);
+     int i = 0;
+
+    wartosc x = podzielic(a, b);
+    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
+    x = razy(a, b);
+    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
+    x = podzielic(a, c);
+    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
+    x = razy(a, c);
+    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
+
+     x = podzielic(a, d);
+    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
   return 0;
 }
