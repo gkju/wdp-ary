@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <assert.h>
 #include "ary.h"
 // na dzielenia trzeba sprawdzic czy min/max nie sa zero, jesli tak to ustawic na dokladnie 0.0
 // jesli mianownik to dokladnie 0 to zwrocic 0 chyba ze b tez zero
@@ -79,14 +80,25 @@ bool zawiera_zero(wartosc x) {
     return is_leq(x.min, 0.0) && is_geq(x.max, 0.0);
 }
 
+void swap_double(double *a, double *b) {
+    double tmp = *a;
+    *a = *b;
+    *b = tmp;
+}
+
 // p podane w %
 wartosc wartosc_dokladnosc(double x, double p) {
-    p /= 100;
-    return (wartosc) {
+    wartosc to_return = (wartosc) {
         .anty_przedzial = false,
-        .min = x * (1.0 - p),
-        .max = x * (1.0 + p)
+        .min = (x * (100.0 - p)) / 100.0,
+        .max = (x * (100.0 + p)) / 100.0
     };
+
+    if(x < 0) {
+        swap_double(&to_return.min, &to_return.max);
+    }
+
+    return to_return;
 }
 
 wartosc wartosc_od_do(double x, double y) {
@@ -176,6 +188,10 @@ double max_wartosc(wartosc x) {
 double sr_wartosc(wartosc x) {
     x = normalizuj_przedzial(x);
     if(is_empty(x)) {
+        return NAN;
+    }
+
+    if(x.anty_przedzial) {
         return NAN;
     }
 
@@ -399,50 +415,6 @@ wartosc podzielic(wartosc a, wartosc b) {
 }
 
 int main() {
-  wartosc jeden = wartosc_dokladna(1);
-  wartosc zero = wartosc_dokladna(0);
-  wartosc mjeden = wartosc_dokladna(-1);
 
-  printf("1=%d\n", in_wartosc(razy(jeden, zero), 0.0));
-  
-  printf("1=%d\n", in_wartosc(razy(zero, wartosc_od_do(1., 10.)), 0.0));
-  
-  wartosc malo = wartosc_od_do(0., 1.);
-  wartosc mjeden_do_jeden = wartosc_od_do(-1., 1.);
-
-  wartosc mdwa = wartosc_dokladna(-2.0);
-  
-  printf("1=%d\n", in_wartosc(razy(zero, malo), 0.0));
-  
-  wartosc duzo = podzielic(jeden, malo);
-  printf("inf=%lf\n", sr_wartosc(duzo));
-  
-  printf("1=%d\n", in_wartosc(razy(zero, duzo), 0.0));
-  
-
-  printf("%.6f %.6f %d \n", podzielic(mjeden, malo).min, podzielic(mjeden, malo).max, podzielic(mjeden, malo).anty_przedzial);
-
-
-    printf("%.6f %.6f %d \n", podzielic(jeden, mjeden_do_jeden).min, podzielic(jeden, mjeden_do_jeden).max, podzielic(jeden, mjeden_do_jeden).anty_przedzial);
-    printf("%.6f %.6f %d \n", podzielic(mjeden, mjeden_do_jeden).min, podzielic(mjeden, mjeden_do_jeden).max, podzielic(mjeden, mjeden_do_jeden).anty_przedzial);
-    printf("%.6f %.6f %d \n", podzielic(mdwa, mjeden_do_jeden).min, podzielic(mdwa, mjeden_do_jeden).max, podzielic(mdwa, mjeden_do_jeden).anty_przedzial);
-
-    wartosc a = wartosc_od_do(3.0, 7.0);
-    wartosc b = wartosc_od_do(-2.0, 4.0);
-    wartosc c = wartosc_od_do(-7.0, 4.0);
-     wartosc d = wartosc_od_do(-7.0, -2.0);
-     int i = 0;
-
-    wartosc x = podzielic(a, b);
-    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
-    x = razy(a, b);
-    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
-    x = podzielic(a, c);
-    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
-    x = razy(a, c);
-    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
-
-     x = podzielic(a, d);
-    printf("%d %.6f %.6f %d \n", ++i, x.min, x.max, x.anty_przedzial);
-  return 0;
+    return 0;
 }
