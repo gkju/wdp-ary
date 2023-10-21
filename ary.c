@@ -303,7 +303,7 @@ wartosc plus(wartosc a, wartosc b) {
     };
 }
 
-wartosc przeciwnosc(wartosc x) {
+wartosc przeciwnienstwo(wartosc x) {
     x = normalizuj_przedzial(x);
     double oldmin = x.min;
     double oldmax = x.max;
@@ -314,7 +314,7 @@ wartosc przeciwnosc(wartosc x) {
 }
 
 wartosc minus(wartosc a, wartosc b) {
-    return plus(a, przeciwnosc(b));
+    return plus(a, przeciwnienstwo(b));
 }
 
 wartosc razy(wartosc a, wartosc b) {
@@ -383,7 +383,7 @@ wartosc razy(wartosc a, wartosc b) {
                 .max = ekstrema_prawe
             };
         } else {
-            return przeciwnosc(razy(a, przeciwnosc(b)));
+            return przeciwnienstwo(razy(a, przeciwnienstwo(b)));
         }
     } else if(b.anty_przedzial) {
         return razy(b, a);
@@ -405,6 +405,5 @@ wartosc podzielic(wartosc a, wartosc b) {
 }
 
 int main() {
-
     return 0;
 }
